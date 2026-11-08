@@ -86,7 +86,6 @@
 </div>
 
 <script>
-    // Fungsi untuk mengubah label petunjuk input secara dinamis tanpa password
     function sesuaikanInput() {
         let role = document.getElementById('role').value;
         let label = document.getElementById('label-identitas');
@@ -101,7 +100,6 @@
         }
     }
 
-    // Simulasi Logika Login Sementara sebelum kita hubungkan ke Database Google Sheets
     function prosesLogin() {
         let role = document.getElementById('role').value;
         let identitas = document.getElementById('identitas').value.trim();
@@ -110,10 +108,9 @@
         if (role === 'ortu') {
             if (identitas === '08123456789') {
                 pesanError.style.display = 'none';
-                // Menyimpan sesi login agar dibaca di halaman dashboard
                 localStorage.setItem("role", "ortu");
                 localStorage.setItem("user", "Bapak/Ibu Ahmad & Rania");
-                window.location.href = "./dashboard.html"; 
+                window.location.href = "dashboard.html"; 
             } else {
                 pesanError.style.display = 'block';
             }
@@ -122,7 +119,7 @@
                 pesanError.style.display = 'none';
                 localStorage.setItem("role", "guru");
                 localStorage.setItem("user", "Ustadzah Utama");
-                window.location.href = "./dashboard.html";
+                window.location.href = "dashboard.html";
             } else {
                 pesanError.style.display = 'block';
             }
