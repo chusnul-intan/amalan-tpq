@@ -242,7 +242,7 @@
         alert("Paraf Digital Berhasil Dikirim! Data E-Amalan " + anakAktif.nama + " telah diperbarui.");
     }
 
-    // LOGIKA GURU: Render data monitoring 5 kelas
+    // LOGIKA GURU: Render data monitoring 5 kelas dengan benar
     function renderTabelGuru(filterKelas) {
         const tbody = document.getElementById("tabel-murid-body");
         tbody.innerHTML = "";
@@ -251,16 +251,19 @@
             if (filterKelas !== "Semua" && murid.kelas !== filterKelas) return;
 
             let badgeClass = murid.paraf === "Sudah Verifikasi" ? "badge-sudah" : "badge-belum";
+            
+            // Perbaikan baris HTML menggunakan simbol Backtick ( ` ) agar teks variabel terbaca sistem
             let row = `<tr>
                 <td><strong>${murid.nama}</strong></td>
                 <td>${murid.kelas}</td>
-${murid.pr}
-${murid.amalan}
-${murid.paraf}
-`;
-tbody.innerHTML += row;
-});
-}
+                <td>${murid.pr}</td>
+                <td>${murid.amalan}</td>
+                <td><span class="badge ${badgeClass}">${murid.paraf}</span></td>
+            </tr>`;
+            
+            tbody.innerHTML += row;
+        });
+    }
 function filterTabelKelas() {
 const kelas = document.getElementById("select-kelas").value;
 renderTabelGuru(kelas);
