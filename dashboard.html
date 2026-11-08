@@ -29,12 +29,7 @@
             color: #1b5e20;
             display: flex;
             justify-content: space-between;
-        }
-        /* Style Halaman Ortu (Multi-Anak) */
-        .anak-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            align-items: center;
         }
         .btn-anak {
             padding: 10px 20px;
@@ -44,6 +39,7 @@
             border-radius: 20px;
             cursor: pointer;
             font-weight: 600;
+            margin-right: 10px;
         }
         .btn-anak.active {
             background: #2e7d32;
@@ -54,6 +50,7 @@
             padding: 20px;
             border-radius: 10px;
             background: #fafafa;
+            margin-top: 15px;
         }
         .check-group {
             display: flex;
@@ -62,11 +59,6 @@
             font-size: 16px;
         }
         .check-group input { margin-right: 15px; transform: scale(1.3); }
-        
-        /* Style Halaman Guru (Tabel 5 Kelas Murid) */
-        .kelas-filter {
-            margin-bottom: 20px;
-        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -87,7 +79,6 @@
         }
         .badge-sudah { background: #c8e6c9; color: #256029; }
         .badge-belum { background: #ffcdd2; color: #c62828; }
-        
         button.utama {
             background: #2e7d32;
             color: white;
@@ -107,24 +98,22 @@
 <div class="container">
     <div class="user-info">
         <span id="txt-welcome">Memuat Sistem...</span>
-        <button onclick="logout()" style="background:none; border:none; color:#d32f2f; cursor:pointer; font-weight:bold;">Keluar</button>
+        <button onclick="logout()" style="background:none; border:none; color:#d32f2f; cursor:pointer; font-weight:bold; font-size:16px;">Keluar</button>
     </div>
 
-    <!-- AREA TAMPILAN 1: ORANG TUA (MULTI-ANAK & CEKLIS) -->
+    <!-- TAMPILAN ORANG TUA -->
     <div id="view-ortu" class="hidden">
         <h3>Pilih Data Anak:</h3>
-        <div class="anak-selector" id="list-anak">
-            <!-- Tombol pilihan anak akan muncul otomatis di sini -->
-        </div>
+        <div id="list-anak"></div>
 
         <div class="card-tugas">
-            <h4 id="nama-anak-aktif">Nama Anak</h4>
+            <h4 id="nama-anak-aktif">-</h4>
             <p><strong>Kelas:</strong> <span id="kelas-anak-aktif">-</span></p>
             <hr>
-            <p><strong>📚 Halaman PR Tilawati/Quran:</strong> <span id="pr-tilawati">Jilid 3, Halaman 15</span></p>
-            <p><strong>📌 Target Doa:</strong> <span id="pr-doa">Doa Masuk Masjid</span></p>
+            <p><strong>📚 Halaman PR Tilawati/Quran:</strong> <span id="pr-tilawati">-</span></p>
+            <p><strong>📌 Target Doa:</strong> <span id="pr-doa">-</span></p>
             <hr>
-            <h4>Pengamalan Rutin Hari Ini (Centang jika sudah dilakukan):</h4>
+            <h4>Pengamalan Rutin Hari Ini:</h4>
             <div class="check-group">
                 <input type="checkbox" id="amalan1">
                 <label for="amalan1">Menyapu lantai atau merapikan tempat tidur</label>
@@ -137,10 +126,10 @@
         </div>
     </div>
 
-    <!-- AREA TAMPILAN 2: GURU (MONITORING DATA 5 KELAS) -->
+    <!-- TAMPILAN GURU -->
     <div id="view-guru" class="hidden">
         <h3>Monitoring Pengamalan & Presensi Santri</h3>
-        <div class="kelas-filter">
+        <div style="margin-bottom: 20px;">
             <label for="select-kelas"><strong>Pilih Kelas TPQ:</strong></label>
             <select id="select-kelas" onchange="filterTabelKelas()" style="padding: 8px; border-radius: 5px; font-size: 15px;">
                 <option value="Semua">Semua Kelas (5 Kelas)</option>
@@ -162,15 +151,12 @@
                     <th>Status Paraf Ortu</th>
                 </tr>
             </thead>
-            <tbody id="tabel-murid-body">
-                <!-- Data semua murid otomatis di-render di sini -->
-            </tbody>
+            <tbody id="tabel-murid-body"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // Database Dummy Lokal untuk Belajar Alur Data Relasional
     const dataAnakSesuaiOrtu = [
         { id: 1, nama: "Ahmad Zaki", kelas: "Kelas A", pr: "Tilawati Jilid 2, Hal 10", doa: "Doa Makan", a1: false, a2: false, paraf: "Belum" },
         { id: 2, nama: "Rania Azzahra", kelas: "Kelas C", pr: "Al-Quran Juz 1, Al-Baqarah 1-10", doa: "Doa Masuk Masjid", a1: false, a2: false, paraf: "Belum" }
@@ -186,13 +172,12 @@
 
     let anakDipilih = 0;
 
-    // Membaca siapa yang login berdasarkan data kiriman halaman index.html sebelumnya
     window.onload = function() {
         const role = localStorage.getItem("role");
         const user = localStorage.getItem("user");
 
         if (!role) {
-            alert("Anda belum login! Kembali ke halaman login.");
+            alert("Anda belum login!");
             window.location.href = "index.html";
             return;
         }
@@ -202,13 +187,12 @@
             document.getElementById("view-ortu").classList.remove("hidden");
             renderTombolAnak();
         } else if (role === "guru") {
-            document.getElementById("txt-welcome").innerText = "Tenaga Pendidik: " + user.toUpperCase();
+            document.getElementById("txt-welcome").innerText = "Tenaga Pendidik: " + user;
             document.getElementById("view-guru").classList.remove("hidden");
             renderTabelGuru("Semua");
         }
     };
 
-    // LOGIKA ORANG TUA: Render tombol multi-anak secara dinamis
     function renderTombolAnak() {
         const containerAnak = document.getElementById("list-anak");
         containerAnak.innerHTML = "";
@@ -224,7 +208,6 @@
             containerAnak.appendChild(btn);
         });
 
-        // Update detail data anak yang sedang aktif diklik
         const anakAktif = dataAnakSesuaiOrtu[anakDipilih];
         document.getElementById("nama-anak-aktif").innerText = anakAktif.nama;
         document.getElementById("kelas-anak-aktif").innerText = anakAktif.kelas;
@@ -239,10 +222,9 @@
         anakAktif.a1 = document.getElementById("amalan1").checked;
         anakAktif.a2 = document.getElementById("amalan2").checked;
         anakAktif.paraf = "Sudah Verifikasi";
-        alert("Paraf Digital Berhasil Dikirim! Data E-Amalan " + anakAktif.nama + " telah diperbarui.");
+        alert("Paraf Digital Berhasil Dikirim untuk " + anakAktif.nama);
     }
 
-    // LOGIKA GURU: Render data monitoring 5 kelas dengan benar
     function renderTabelGuru(filterKelas) {
         const tbody = document.getElementById("tabel-murid-body");
         tbody.innerHTML = "";
@@ -259,15 +241,20 @@
                 <td>${murid.amalan}</td>
                 <td><span class="badge ${badgeClass}">${murid.paraf}</span></td>
             </tr>`;
-
+            
             tbody.innerHTML += row;
         });
     }
-function filterTabelKelas() {
-const kelas = document.getElementById("select-kelas").value;
-renderTabelGuru(kelas);
-}
-function logout() {
-localStorage.clear();
-window.location.href = "index.html";
-}
+
+    function filterTabelKelas() {
+        const kelas = document.getElementById("select-kelas").value;
+        renderTabelGuru(kelas);
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+</script>
+</body>
+</html>
