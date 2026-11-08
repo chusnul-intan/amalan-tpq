@@ -107,22 +107,22 @@
         let identitas = document.getElementById('identitas').value.trim();
         let pesanError = document.getElementById('pesan-error');
 
-        // Data dummy sementara untuk belajar alur sistem
         if (role === 'ortu') {
-            // Simulasi Ortu Ahmad yang punya 2 anak (Ahmad di Kelas A, Rania di Kelas C)
             if (identitas === '08123456789') {
                 pesanError.style.display = 'none';
-                alert('Login Berhasil sebagai Orang Tua (Ahmad & Rania)! Menuju halaman kendali anak...');
-                // Kelak di sini kodenya akan mengarahkan ke halaman dashboard ortu membawa data anak-anaknya
+                // Menyimpan sesi login agar dibaca di halaman dashboard
+                localStorage.setItem("role", "ortu");
+                localStorage.setItem("user", "Bapak/Ibu Ahmad & Rania");
+                window.location.href = "dashboard.html"; 
             } else {
                 pesanError.style.display = 'block';
             }
         } else if (role === 'guru') {
-            // Simulasi Guru Utama TPQ
             if (identitas.toLowerCase() === 'ustadzah') {
                 pesanError.style.display = 'none';
-                alert('Login Berhasil sebagai Guru TPQ! Menuju dashboard rekap data semua murid...');
-                // Kelak di sini kodenya akan membuka halaman data 5 kelas murid
+                localStorage.setItem("role", "guru");
+                localStorage.setItem("user", "Ustadzah Utama");
+                window.location.href = "dashboard.html";
             } else {
                 pesanError.style.display = 'block';
             }
