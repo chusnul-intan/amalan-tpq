@@ -252,15 +252,14 @@
 
             let badgeClass = murid.paraf === "Sudah Verifikasi" ? "badge-sudah" : "badge-belum";
             
-            // PASTIKAN BARIS 256 DIBAWAH INI DIAWALI DENGAN SIMBOL BACKTICK ( ` )
             let row = `<tr>
                 <td><strong>${murid.nama}</strong></td>
                 <td>${murid.kelas}</td>
                 <td>${murid.pr}</td>
                 <td>${murid.amalan}</td>
                 <td><span class="badge ${badgeClass}">${murid.paraf}</span></td>
-            </tr>`; // DAN BARIS 262 INI DIAKHIRI DENGAN BACKTICK DAN TITIK KOMA ( `; )
-            
+            </tr>`;
+
             tbody.innerHTML += row;
         });
     }
