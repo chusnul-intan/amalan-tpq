@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Amalan TPQ - Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 { color: #2e7d32; margin-top: 0; }
+        .user-info {
+            background: #e8f5e9;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #1b5e20;
+            display: flex;
+            justify-content: space-between;
+        }
+        /* Style Halaman Ortu (Multi-Anak) */
+        .anak-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-anak {
+            padding: 10px 20px;
+            border: 2px solid #2e7d32;
+            background: white;
+            color: #2e7d32;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-anak.active {
+            background: #2e7d32;
+            color: white;
+        }
+        .card-tugas {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        .check-group {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+        .check-group input { margin-right: 15px; transform: scale(1.3); }
+        
+        /* Style Halaman Guru (Tabel 5 Kelas Murid) */
+        .kelas-filter {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background-color: #2e7d32; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-sudah { background: #c8e6c9; color: #256029; }
+        .badge-belum { background: #ffcdd2; color: #c62828; }
+        
+        button.utama {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        button.utama:hover { background: #1b5e20; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="user-info">
+        <span id="txt-welcome">Memuat Sistem...</span>
+        <button onclick="logout()" style="background:none; border:none; color:#d32f2f; cursor:pointer; font-weight:bold;">Keluar</button>
+    </div>
+
+    <!-- AREA TAMPILAN 1: ORANG TUA (MULTI-ANAK & CEKLIS) -->
+    <div id="view-ortu" class="hidden">
+        <h3>Pilih Data Anak:</h3>
+        <div class="anak-selector" id="list-anak">
+            <!-- Tombol pilihan anak akan muncul otomatis di sini -->
+        </div>
+
+        <div class="card-tugas">
+            <h4 id="nama-anak-aktif">Nama Anak</h4>
+            <p><strong>Kelas:</strong> <span id="kelas-anak-aktif">-</span></p>
+            <hr>
+            <p><strong>📚 Halaman PR Tilawati/Quran:</strong> <span id="pr-tilawati">Jilid 3, Halaman 15</span></p>
+            <p><strong>📌 Target Doa:</strong> <span id="pr-doa">Doa Masuk Masjid</span></p>
+            <hr>
+            <h4>Pengamalan Rutin Hari Ini (Centang jika sudah dilakukan):</h4>
+            <div class="check-group">
+                <input type="checkbox" id="amalan1">
+                <label for="amalan1">Menyapu lantai atau merapikan tempat tidur</label>
+            </div>
+            <div class="check-group">
+                <input type="checkbox" id="amalan2">
+                <label for="amalan2">Berpamitan/mencium tangan ortu ketika pergi keluar</label>
+            </div>
+            <button class="utama" onclick="simpanAmalanOrtu()">Kirim Paraf/Verifikasi</button>
+        </div>
+    </div>
+
+    <!-- AREA TAMPILAN 2: GURU (MONITORING DATA 5 KELAS) -->
+    <div id="view-guru" class="hidden">
+        <h3>Monitoring Pengamalan & Presensi Santri</h3>
+        <div class="kelas-filter">
+            <label for="select-kelas"><strong>Pilih Kelas TPQ:</strong></label>
+            <select id="select-kelas" onchange="filterTabelKelas()" style="padding: 8px; border-radius: 5px; font-size: 15px;">
+                <option value="Semua">Semua Kelas (5 Kelas)</option>
+                <option value="Kelas A">Kelas A (Siang)</option>
+                <option value="Kelas B">Kelas B (Siang)</option>
+                <option value="Kelas C">Kelas C (Sore)</option>
+                <option value="Kelas D">Kelas D (Sore)</option>
+                <option value="Kelas E">Kelas E (Malam)</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nama Santri</th>
+                    <th>Kelas</th>
+                    <th>PR Tilawati</th>
+                    <th>Amalan Harian</th>
+                    <th>Status Paraf Ortu</th>
+                </tr>
+            </thead>
+            <tbody id="tabel-murid-body">
+                <!-- Data semua murid otomatis di-render di sini -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Database Dummy Lokal untuk Belajar Alur Data Relasional
+    const dataAnakSesuaiOrtu = [
+        { id: 1, nama: "Ahmad Zaki", kelas: "Kelas A", pr: "Tilawati Jilid 2, Hal 10", doa: "Doa Makan", a1: false, a2: false, paraf: "Belum" },
+        { id: 2, nama: "Rania Azzahra", kelas: "Kelas C", pr: "Al-Quran Juz 1, Al-Baqarah 1-10", doa: "Doa Masuk Masjid", a1: false, a2: false, paraf: "Belum" }
+    ];
+
+    const dataSemuaMuridTPQ = [
+        { nama: "Ahmad Zaki", kelas: "Kelas A", pr: "Jilid 2, Hal 10", amalan: "Sudah Semua", paraf: "Sudah Verifikasi" },
+        { nama: "Rania Azzahra", kelas: "Kelas C", pr: "Juz 1, Al-Baqarah 1-10", amalan: "Belum Menyapu", paraf: "Belum" },
+        { nama: "Muhammad Faiz", kelas: "Kelas B", pr: "Jilid 3, Hal 5", amalan: "Sudah Semua", paraf: "Sudah Verifikasi" },
+        { nama: "Siti Aminah", kelas: "Kelas D", pr: "Jilid 4, Hal 20", amalan: "Belum Berpamitan", paraf: "Belum" },
+        { nama: "Budi Santoso", kelas: "Kelas E", pr: "Juz 30, An-Naba", amalan: "Sudah Semua", paraf: "Sudah Verifikasi" }
+    ];
+
+    let anakDipilih = 0;
+
+    // Membaca siapa yang login berdasarkan data kiriman halaman index.html sebelumnya
+    window.onload = function() {
+        const role = localStorage.getItem("role");
+        const user = localStorage.getItem("user");
+
+        if (!role) {
+            alert("Anda belum login! Kembali ke halaman login.");
+            window.location.href = "index.html";
+            return;
+        }
+
+        if (role === "ortu") {
+            document.getElementById("txt-welcome").innerText = "Wali Murid: " + user;
+            document.getElementById("view-ortu").classList.remove("hidden");
+            renderTombolAnak();
+        } else if (role === "guru") {
+            document.getElementById("txt-welcome").innerText = "Tenaga Pendidik: " + user.toUpperCase();
+            document.getElementById("view-guru").classList.remove("hidden");
+            renderTabelGuru("Semua");
+        }
+    };
+
+    // LOGIKA ORANG TUA: Render tombol multi-anak secara dinamis
+    function renderTombolAnak() {
+        const containerAnak = document.getElementById("list-anak");
+        containerAnak.innerHTML = "";
+        
+        dataAnakSesuaiOrtu.forEach((anak, index) => {
+            let btn = document.createElement("button");
+            btn.className = `btn-anak ${index === anakDipilih ? 'active' : ''}`;
+            btn.innerText = anak.nama;
+            btn.onclick = function() {
+                anakDipilih = index;
+                renderTombolAnak();
+            };
+            containerAnak.appendChild(btn);
+        });
+
+        // Update detail data anak yang sedang aktif diklik
+        const anakAktif = dataAnakSesuaiOrtu[anakDipilih];
+        document.getElementById("nama-anak-aktif").innerText = anakAktif.nama;
+        document.getElementById("kelas-anak-aktif").innerText = anakAktif.kelas;
+        document.getElementById("pr-tilawati").innerText = anakAktif.pr;
+        document.getElementById("pr-doa").innerText = anakAktif.doa;
+        document.getElementById("amalan1").checked = anakAktif.a1;
+        document.getElementById("amalan2").checked = anakAktif.a2;
+    }
+
+    function simpanAmalanOrtu() {
+        const anakAktif = dataAnakSesuaiOrtu[anakDipilih];
+        anakAktif.a1 = document.getElementById("amalan1").checked;
+        anakAktif.a2 = document.getElementById("amalan2").checked;
+        anakAktif.paraf = "Sudah Verifikasi";
+        alert("Paraf Digital Berhasil Dikirim! Data E-Amalan " + anakAktif.nama + " telah diperbarui.");
+    }
+
+    // LOGIKA GURU: Render data monitoring 5 kelas
+    function renderTabelGuru(filterKelas) {
+        const tbody = document.getElementById("tabel-murid-body");
+        tbody.innerHTML = "";
+
+        dataSemuaMuridTPQ.forEach(murid => {
+            if (filterKelas !== "Semua" && murid.kelas !== filterKelas) return;
+
+            let badgeClass = murid.paraf === "Sudah Verifikasi" ? "badge-sudah" : "badge-belum";
+            let row = `<tr>
+                <td><strong>${murid.nama}</strong></td>
+                <td>${murid.kelas}</td>
+${murid.pr}
+${murid.amalan}
+${murid.paraf}
+`;
+tbody.innerHTML += row;
+});
+}
+function filterTabelKelas() {
+const kelas = document.getElementById("select-kelas").value;
+renderTabelGuru(kelas);
+}
+function logout() {
+localStorage.clear();
+window.location.href = "index.html";
+}
