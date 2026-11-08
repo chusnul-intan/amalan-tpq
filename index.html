@@ -113,7 +113,7 @@
                 // Menyimpan sesi login agar dibaca di halaman dashboard
                 localStorage.setItem("role", "ortu");
                 localStorage.setItem("user", "Bapak/Ibu Ahmad & Rania");
-                window.location.href = "dashboard.html"; 
+                window.location.href = "./dashboard.html"; 
             } else {
                 pesanError.style.display = 'block';
             }
@@ -122,7 +122,7 @@
                 pesanError.style.display = 'none';
                 localStorage.setItem("role", "guru");
                 localStorage.setItem("user", "Ustadzah Utama");
-                window.location.href = "dashboard.html";
+                window.location.href = "./dashboard.html";
             } else {
                 pesanError.style.display = 'block';
             }
