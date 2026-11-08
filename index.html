@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Amalan TPQ - Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 { color: #2e7d32; margin-bottom: 5px; }
+        p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #1b5e20; }
+        .error-message {
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>E-Amalan TPQ</h2>
+    <p>Baitul Izza Jirapan</p>
+    
+    <form id="form-login">
+        <div class="input-group">
+            <label for="role">Masuk Sebagai:</label>
+            <select id="role" onchange="sesuaikanInput()">
+                <option value="ortu">Wali Murid / Orang Tua</option>
+                <option value="guru">Guru / Tenaga Pendidik</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label id="label-identitas" for="identitas">Nomor WhatsApp Terdaftar:</label>
+            <input type="text" id="identitas" placeholder="Contoh: 08123456789" required>
+        </div>
+
+        <button type="button" onclick="prosesLogin()">Masuk ke Sistem</button>
+        <div id="pesan-error" class="error-message">ID atau Nomor WhatsApp tidak terdaftar!</div>
+    </form>
+</div>
+
+<script>
+    // Fungsi untuk mengubah label petunjuk input secara dinamis tanpa password
+    function sesuaikanInput() {
+        let role = document.getElementById('role').value;
+        let label = document.getElementById('label-identitas');
+        let input = document.getElementById('identitas');
+        
+        if (role === 'guru') {
+            label.innerText = "Nama Kode Guru / NIP:";
+            input.placeholder = "Masukkan nama kode guru Anda";
+        } else {
+            label.innerText = "Nomor WhatsApp Terdaftar:";
+            input.placeholder = "Contoh: 08123456789";
+        }
+    }
+
+    // Simulasi Logika Login Sementara sebelum kita hubungkan ke Database Google Sheets
+    function prosesLogin() {
+        let role = document.getElementById('role').value;
+        let identitas = document.getElementById('identitas').value.trim();
+        let pesanError = document.getElementById('pesan-error');
+
+        // Data dummy sementara untuk belajar alur sistem
+        if (role === 'ortu') {
+            // Simulasi Ortu Ahmad yang punya 2 anak (Ahmad di Kelas A, Rania di Kelas C)
+            if (identitas === '08123456789') {
+                pesanError.style.display = 'none';
+                alert('Login Berhasil sebagai Orang Tua (Ahmad & Rania)! Menuju halaman kendali anak...');
+                // Kelak di sini kodenya akan mengarahkan ke halaman dashboard ortu membawa data anak-anaknya
+            } else {
+                pesanError.style.display = 'block';
+            }
+        } else if (role === 'guru') {
+            // Simulasi Guru Utama TPQ
+            if (identitas.toLowerCase() === 'ustadzah') {
+                pesanError.style.display = 'none';
+                alert('Login Berhasil sebagai Guru TPQ! Menuju dashboard rekap data semua murid...');
+                // Kelak di sini kodenya akan membuka halaman data 5 kelas murid
+            } else {
+                pesanError.style.display = 'block';
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
